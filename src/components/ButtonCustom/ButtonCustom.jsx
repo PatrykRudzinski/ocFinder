@@ -10,6 +10,10 @@ const ButtonCustom = withStyles(({color, palette}) => ( {
         '&:hover': {
             backgroundColor: color.yellow20,
         },
+        '&:disabled': {
+            backgroundColor: color.yellow20,
+            color: palette.getContrastText(color.yellow20),
+        },
     },
 } ))(Button);
 

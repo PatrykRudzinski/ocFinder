@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 
 import logo from '../../assets/logo.png';
@@ -41,7 +41,7 @@ const useStyles = makeStyles(({size, spacing, font, color}) => ( {
     },
 } ));
 
-export default () => {
+const Hero = () => {
 
     const classes = useStyles();
 
@@ -52,3 +52,5 @@ export default () => {
         </h1>
     </section>
 };
+
+export default Hero
