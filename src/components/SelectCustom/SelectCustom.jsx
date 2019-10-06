@@ -1,11 +1,13 @@
-import React, {useRef, useState, useEffect} from "react";
+import React, {useRef, useState, useEffect, useContext} from "react";
 import PropTypes from 'prop-types';
+import {ReactReduxContext} from 'react-redux';
 
 import {makeStyles} from '@material-ui/core/styles';
 import {
     Select,
     InputLabel,
     FormControl,
+    MenuItem,
 } from "@material-ui/core";
 
 const useStyles = makeStyles(({spacing}) => ( {
@@ -14,46 +16,50 @@ const useStyles = makeStyles(({spacing}) => ( {
     },
 } ));
 
-const SelectCustom = ({label, id, initialValue, onSelect, options, disabled}) => {
+const SelectCustom = ({label, storeData: {id, type}, onSelect, options, disabled}) => {
     const classes = useStyles();
     const inputLabel = useRef(null);
+    const {store} = useContext(ReactReduxContext);
     const [labelWidth, setLabelWidth] = useState(0);
-    const [value, setValue] = useState(initialValue);
+    const getValue = () => (store && store.getState()[ id ] !== null) ? store.getState()[ id ] : '';
 
     useEffect(() => {
         setLabelWidth(inputLabel.current.offsetWidth);
     }, []);
 
     const changeHandler = e => {
-        setValue(e.target.value);
-        if (typeof onSelect === 'function') onSelect(e);
+        const {value} = e.target;
+        store.dispatch({type, value});
+        if (typeof onSelect === 'function') onSelect();
     };
 
     return (
         <FormControl
-            variant="outlined"
+            variant="filled"
             className={classes.formControl}
             disabled={!options.length || disabled}
         >
-            <InputLabel ref={inputLabel} htmlFor={id}>
+            <InputLabel ref={inputLabel} htmlFor={id} shrink={!!getValue()}>
                 {label}
             </InputLabel>
             <Select
-                native
-                value={value}
+                value={getValue()}
                 onChange={changeHandler}
                 labelWidth={labelWidth}
                 inputProps={{
                     name: label,
-                    id,
+                    id: id,
                 }}
             >
-                <option value=""/>
+                <MenuItem value=""/>
                 {
                     options.length && options.map(option => (
-                        <option value={option.value} key={option.value}>
+                        <MenuItem
+                            value={option.value}
+                            key={option.value}
+                        >
                             {option.label}
-                        </option>
+                        </MenuItem>
                     ))
                 }
             </Select>
@@ -63,21 +69,20 @@ const SelectCustom = ({label, id, initialValue, onSelect, options, disabled}) =>
 
 SelectCustom.defaultProps = {
     disabled: false,
-    initialValue: '',
     options: [],
 };
 
-const valuePropType = PropTypes.oneOfType([PropTypes.string, PropTypes.number]);
-
 SelectCustom.propTypes = {
     label: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
+    storeData: PropTypes.shape({
+        id: PropTypes.string,
+        type: PropTypes.string,
+    }).isRequired,
     disabled: PropTypes.bool,
     onSelect: PropTypes.func,
-    initialValue: valuePropType,
     options: PropTypes.arrayOf(
         PropTypes.shape({
-            value: valuePropType.isRequired,
+            value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
             label: PropTypes.string.isRequired,
         })
     ),

@@ -8,12 +8,14 @@
     "@material-ui/styles": "^4.4.3",
     "prop-types": "^15.7.2",
     "react": "^16.10.0",
+    "react-app-polyfill": "^1.0.4",
     "react-dom": "^16.10.0",
+    "react-redux": "^7.1.1",
     "redux": "^4.0.4"
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "build": "react-app-rewired build && node ./scripts/createDemo",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
@@ -30,7 +32,9 @@
     ]
   },
   "devDependencies": {
+    "create-html": "^4.1.0",
     "react-app-rewired": "^2.1.3",
-    "react-scripts": "3.1.2"
+    "react-scripts": "3.1.2",
+    "rimraf": "^3.0.0"
   }
 }
